@@ -30,7 +30,7 @@ function _init()
 	res = nil
 
 	print("\ftPicotron Remote Terminal")
-	print("\f7Listening for commands on localhost:5000/remote")
+	print("\f7Polling for commands from localhost:5000/remote")
 end
 
 function _update()
