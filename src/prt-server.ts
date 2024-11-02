@@ -18,6 +18,18 @@ const port = 5000;
 const command_queue = new Queue<Command>();
 let client_pid: string;
 
+function PicotronDriveRoot() {
+    switch (process.platform) {
+        case "win32":
+            return path.join(process.env.APPDATA as string, "Picotron", "drive");
+        case "darwin":
+            return path.join(process.env.HOME as string, "Library", "Application Support", "Picotron", "drive");
+        case "linux":
+        default:
+            return path.join(process.env.HOME as string, ".lexaloffle", "Picotron", "drive");
+    }
+}
+
 app.get("/v", (_req, res) => {
     res.send("PRT")
 })
@@ -60,7 +72,7 @@ app.get("/host-command", async (req, res) => {
 
     if (isHostCommand(req.query)) {
         // get the pwd relative to the root of the picotron drive
-        const cwd = path.join(process.env.HOME as string, ".lexaloffle/Picotron/drive/", req.query.pwd)
+        const cwd = path.join(PicotronDriveRoot(), req.query.pwd)
         // follow any symlinks
         const canonicalCWD = await fs.readlink(cwd).catch(() => cwd);
 
