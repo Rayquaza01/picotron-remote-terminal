@@ -3,8 +3,7 @@ import util from "util";
 import child_process from "child_process";
 const exec = util.promisify(child_process.exec);
 import path from "path";
-import fs from "fs";
-const lstat = util.promisify(fs.lstat);
+import { promises as fs } from "fs";
 
 import express from "express";
 
@@ -28,6 +27,7 @@ app.get("/remote", async (req, res) => {
         if (client_pid !== req.query.pid) {
             client_pid = req.query.pid;
             command_queue.clear_waitlist();
+            console.log("New client connected, waitlist reset");
         }
 
         client_pid = req.query.pid;
@@ -36,6 +36,8 @@ app.get("/remote", async (req, res) => {
     const cmd = await command_queue.dequeue().catch(() => {
         return { command: "exit" } as Command
     }) as Command;
+
+    console.log(`Running remote command ${cmd.command}`);
 
     res.send(cmd.command);
 });
@@ -46,8 +48,10 @@ app.post("/command", (req, res) => {
     if (isCommand(req.body)) {
         command_queue.enqueue(req.body);
         res.send("OK");
+        console.log(`Queued command ${req.body.command}`);
     } else {
         res.send("KO");
+        console.log(`Failed to queue command! Is the request formatted correctly?`);
     }
 });
 
@@ -55,13 +59,22 @@ app.get("/host-command", async (req, res) => {
     res.setHeader("Content-Type", "text/plain")
 
     if (isHostCommand(req.query)) {
-        const cwd = path.join(process.env.HOME as string, ".lexaloffle/Picotron/drive/", req.query.pwd);
-        if (!(await lstat(cwd)).isDirectory()) {
-            res.send("Directory does not exist");
+        // get the pwd relative to the root of the picotron drive
+        const cwd = path.join(process.env.HOME as string, ".lexaloffle/Picotron/drive/", req.query.pwd)
+        // follow any symlinks
+        const canonicalCWD = await fs.readlink(cwd).catch(() => cwd);
+
+        const cwdstat = await fs.stat(canonicalCWD).catch(() => null);
+        // if cwd is not a directory (for example, cwd is in a .p64 file) or if path is invalid, return error
+        if (!cwdstat || !cwdstat.isDirectory()) {
+            res.send(`Current working directory (${canonicalCWD}) is not a directory!`);
+            console.log(`Couldn't run host command (${req.query.command}). Current working directory (${canonicalCWD}) is invalid!`);
             return;
         }
 
-        const {stderr, stdout, code} = await exec(req.query.command, { cwd })
+        console.log(`Running host command (${req.query.command}) in directory (${canonicalCWD})`);
+
+        const {stderr, stdout, code} = await exec(req.query.command, { cwd: canonicalCWD })
             .catch((err) => err);
 
         if (typeof code === "string") {
@@ -79,6 +92,7 @@ app.get("/host-command", async (req, res) => {
             return;
         }
     } else {
+        console.log("Failed to run host command! Is the request formatted correctly?");
         res.send("KO")
     }
 });
