@@ -1,0 +1,27 @@
+{
+  "name": "picotron-remote",
+  "version": "1.0.0",
+  "main": "dist/prt-server.js",
+  "bin": {
+    "prt-server": "dist/prt-server.js",
+    "prt": "dist/prt.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc",
+    "watch": "tsc --watch",
+    "start": "node dist/prt-server.js",
+    "prt": "node dist/prt.js"
+  },
+  "author": "",
+  "license": "MIT",
+  "description": "",
+  "dependencies": {
+    "express": "^4.21.1",
+    "typescript": "^5.6.3"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "@types/lua-json": "^1.0.3"
+  }
+}
