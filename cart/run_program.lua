@@ -20,11 +20,11 @@ function run_lua(script)
 	if f then
 		local cor = cocreate(f)
 		repeat
-			local res, err = coresume(cor)
+			local _, coerr = coresume(cor)
 
 			if err then
 				print("Runtime Error")
-				print(err)
+				print(coerr)
 			end
 
 		until costatus(cor) != "running"
