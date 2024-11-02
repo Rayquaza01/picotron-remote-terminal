@@ -73,20 +73,18 @@ app.get("/host-command", async (req, res) => {
     if (isHostCommand(req.query)) {
         // get the pwd relative to the root of the picotron drive
         const cwd = path.join(PicotronDriveRoot(), req.query.pwd)
-        // follow any symlinks
-        const canonicalCWD = await fs.readlink(cwd).catch(() => cwd);
 
-        const cwdstat = await fs.stat(canonicalCWD).catch(() => null);
+        const cwdstat = await fs.stat(cwd).catch(() => null);
         // if cwd is not a directory (for example, cwd is in a .p64 file) or if path is invalid, return error
         if (!cwdstat || !cwdstat.isDirectory()) {
-            res.send(`Current working directory (${canonicalCWD}) is not a directory!`);
-            console.log(`Couldn't run host command (${req.query.command}). Current working directory (${canonicalCWD}) is invalid!`);
+            res.send(`Current working directory (${cwd}) is not a directory!`);
+            console.log(`Couldn't run host command (${req.query.command}). Current working directory (${cwd}) is invalid!`);
             return;
         }
 
-        console.log(`Running host command (${req.query.command}) in directory (${canonicalCWD})`);
+        console.log(`Running host command (${req.query.command}) in directory (${cwd})`);
 
-        const {stderr, stdout, code} = await exec(req.query.command, { cwd: canonicalCWD })
+        const {stderr, stdout, code} = await exec(req.query.command, { cwd })
             .catch((err) => err);
 
         if (typeof code === "string") {
