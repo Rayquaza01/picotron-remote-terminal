@@ -35,6 +35,8 @@ app.get("/", (_req, res) => {
     res.send("PRT");
 })
 
+// pull a command from the queue
+// meant to be called from inside of picotron
 app.get("/remote", async (req, res) => {
     if (isRemoteMetadata(req.query)) {
         if (client_pid !== req.query.pid) {
@@ -55,6 +57,8 @@ app.get("/remote", async (req, res) => {
     res.send(cmd.command);
 });
 
+// queue a command
+// meant to be called from the prt utility on the host
 app.post("/command", (req, res) => {
     res.setHeader("Content-Type", "text/plain");
 
@@ -68,6 +72,8 @@ app.post("/command", (req, res) => {
     }
 });
 
+// run a host command
+// meant to be run from the host utility inside picotron
 app.get("/host-command", async (req, res) => {
     res.setHeader("Content-Type", "text/plain");
 
@@ -108,6 +114,7 @@ app.get("/host-command", async (req, res) => {
     }
 });
 
+// closes all connections
 app.get("/close", (_req, res) => {
     command_queue.clear_waitlist();
 
@@ -115,6 +122,7 @@ app.get("/close", (_req, res) => {
     res.send("OK")
 })
 
+// closes all connections and shuts down server
 app.get("/shutdown", (_req, res) => {
     command_queue.clear_waitlist();
     res.send("OK")
