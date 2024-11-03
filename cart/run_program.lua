@@ -14,6 +14,7 @@ function resolve_program_path(progname)
 	return false
 end
 
+-- adapted from try lua block in /system/apps/terminal.lua
 function run_lua(script)
 	local f, err = load(script, nil, "t", _ENV)
 
