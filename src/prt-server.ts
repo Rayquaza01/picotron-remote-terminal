@@ -30,8 +30,9 @@ function PicotronDriveRoot() {
     }
 }
 
-app.get("/v", (_req, res) => {
-    res.send("PRT")
+// return a string identifying prt
+app.get("/", (_req, res) => {
+    res.send("PRT");
 })
 
 app.get("/remote", async (req, res) => {
@@ -46,7 +47,7 @@ app.get("/remote", async (req, res) => {
     }
 
     const cmd = await command_queue.dequeue().catch(() => {
-        return { command: "exit" } as Command
+        return { command: "exit" } as Command;
     }) as Command;
 
     console.log(`Running remote command ${cmd.command}`);
@@ -68,11 +69,11 @@ app.post("/command", (req, res) => {
 });
 
 app.get("/host-command", async (req, res) => {
-    res.setHeader("Content-Type", "text/plain")
+    res.setHeader("Content-Type", "text/plain");
 
     if (isHostCommand(req.query)) {
         // get the pwd relative to the root of the picotron drive
-        const cwd = path.join(PicotronDriveRoot(), req.query.pwd)
+        const cwd = path.join(PicotronDriveRoot(), req.query.pwd);
 
         const cwdstat = await fs.stat(cwd).catch(() => null);
         // if cwd is not a directory (for example, cwd is in a .p64 file) or if path is invalid, return error
@@ -103,9 +104,24 @@ app.get("/host-command", async (req, res) => {
         }
     } else {
         console.log("Failed to run host command! Is the request formatted correctly?");
-        res.send("KO")
+        res.send("KO");
     }
 });
+
+app.get("/close", (_req, res) => {
+    command_queue.clear_waitlist();
+
+    console.log("Closing all client connections");
+    res.send("OK")
+})
+
+app.get("/shutdown", (_req, res) => {
+    command_queue.clear_waitlist();
+    res.send("OK")
+
+    console.log("Shutting down...");
+    setTimeout(() => process.exit(0), 5000)
+})
 
 app.listen(port, () => {
     console.log(`Listening on ${port}`);

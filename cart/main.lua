@@ -5,6 +5,13 @@
 include("run_program.lua")
 include("table_to_query.lua")
 
+function help_text()
+	print("\ftPicotron Remote Terminal")
+	print("\f7Polling for commands from localhost:5000/remote")
+	print("Close session with \feCTRL+Q\f7")
+	print("Close server with \feCTRL+X\f7")
+end
+
 function _init()
 	window({
 		width = 256, height = 128,
@@ -29,11 +36,22 @@ function _init()
 
 	res = nil
 
-	print("\ftPicotron Remote Terminal")
-	print("\f7Polling for commands from localhost:5000/remote")
+	help_text()
 end
 
 function _update()
+	if key("ctrl") then
+		if keyp("q") then
+			print("Close")
+			fetch("http://localhost:5000/close")
+		end
+
+		if keyp("x") then
+			print("Shutdown")
+			fetch("http://localhost:5000/shutdown")
+		end
+	end
+
 	data = {
 		pwd = pwd(),
 		pid = pid()
@@ -53,8 +71,7 @@ function _draw()
 	if res != nil then
 		cls()
 
-		print("\ftPicotron Remote Terminal")
-		print("\f7Polling for commands from localhost:5000/remote")
+		help_text()
 
 		local cmd_text = res
 		local cmd_lines = split(res, "\n", false)
