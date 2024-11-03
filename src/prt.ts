@@ -27,9 +27,9 @@ async function main() {
         body: JSON.stringify({ command })
     });
 
-    const body = await res.text();
+    // const body = await res.text();
 
-    console.log(body);
+    // console.log(body);
 }
 
 main();
