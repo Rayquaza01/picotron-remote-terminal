@@ -6,8 +6,8 @@ include("run_program.lua")
 include("table_to_query.lua")
 
 function help_text()
-	print("\ftPicotron Remote Terminal")
-	print("\f7Polling for commands from localhost:5000/remote")
+	print("\ftPicotron Remote Terminal\f7")
+	print("Polling for commands from localhost:5000/remote")
 	print("Close session with \feCTRL+Q\f7")
 	print("Close server with \feCTRL+X\f7")
 end
