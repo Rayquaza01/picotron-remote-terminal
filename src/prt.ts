@@ -13,6 +13,12 @@ if (!command) {
 }
 
 async function main() {
+    if (command === "prt-shutdown") {
+        console.log("Shutting down prt-server");
+        await fetch("http://localhost:5000/shutdown");
+        process.exit(0)
+    }
+
     const res = await fetch("http://localhost:5000/command", {
         method: "POST",
         headers: {
