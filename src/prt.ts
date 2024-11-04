@@ -2,7 +2,7 @@
 import fs from "fs";
 
 let command: string;
-if (process.stdin.isTTY) {
+if (process.argv.length > 2) {
     command = process.argv.slice(2).join(" ");
 } else {
     command = fs.readFileSync(process.stdin.fd, "utf-8");

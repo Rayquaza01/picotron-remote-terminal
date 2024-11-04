@@ -3,6 +3,8 @@ export interface Command {
     // command_text: string
     /** The command to run */
     command: string
+    /** If set, drop request without responding */
+    drop?: boolean
 }
 
 export function isCommand(c: any): c is Command {

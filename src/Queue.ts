@@ -5,12 +5,15 @@ export class Queue<T> {
     enqueue(value: T) {
         this.queue.push(value);
 
-        if (this.waitlist.length > 0 && this.queue.length > 0) {
+        if (this.waitlist.length > 0) {
             this.waitlist.shift()?.resolve(this.queue.shift());
         }
     }
 
     async dequeue(): Promise<T | undefined> {
+        // when adding a value, clear waitlist
+        this.clear_waitlist();
+
         if (this.queue.length > 0) {
             return Promise.resolve(this.queue.shift())
         } else {
@@ -24,9 +27,9 @@ export class Queue<T> {
         return this.queue.length;
     }
 
-    clear_waitlist() {
+    clear_waitlist(reason?: T) {
         while (this.waitlist.length > 0) {
-            this.waitlist.shift()?.reject();
+            this.waitlist.shift()?.reject(reason);
         }
     }
 }

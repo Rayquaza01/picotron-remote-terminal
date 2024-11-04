@@ -16,7 +16,7 @@ app.use(express.json());
 const port = 5000;
 
 const command_queue = new Queue<Command>();
-let client_pid: string;
+let client_pid: number = -1;
 
 function PicotronDriveRoot() {
     switch (process.platform) {
@@ -39,18 +39,27 @@ app.get("/", (_req, res) => {
 // meant to be called from inside of picotron
 app.get("/remote", async (req, res) => {
     if (isRemoteMetadata(req.query)) {
-        if (client_pid !== req.query.pid) {
-            client_pid = req.query.pid;
-            command_queue.clear_waitlist();
-            console.log("New client connected, waitlist reset");
+        let pid = parseInt(req.query.pid);
+        if (pid > client_pid) {
+            client_pid = pid;
+        } else if (pid < client_pid) {
+            // send an exit command if request is from a lower pid
+            // this ensures there is only 1 client open at once,
+            // and also prevents "phantom" requests from eating commands
+            res.send("exit");
+            return;
         }
-
-        client_pid = req.query.pid;
     }
+    console.log("Got Request:", req.query);
 
-    const cmd = await command_queue.dequeue().catch(() => {
-        return { command: "exit" } as Command;
+    const cmd = await command_queue.dequeue().catch(err => {
+        return err || { command: "nil", drop: true } as Command;
     }) as Command;
+
+    if (cmd.drop) {
+        req.socket.end();
+        return;
+    }
 
     console.log(`Running remote command ${cmd.command}`);
 
@@ -116,7 +125,7 @@ app.get("/host-command", async (req, res) => {
 
 // closes all connections
 app.get("/close", (_req, res) => {
-    command_queue.clear_waitlist();
+    command_queue.clear_waitlist({ command: "exit" });
 
     console.log("Closing all client connections");
     res.send("OK")
@@ -124,7 +133,7 @@ app.get("/close", (_req, res) => {
 
 // closes all connections and shuts down server
 app.get("/shutdown", (_req, res) => {
-    command_queue.clear_waitlist();
+    command_queue.clear_waitlist({ command: "exit" });
     res.send("OK")
 
     console.log("Shutting down...");
