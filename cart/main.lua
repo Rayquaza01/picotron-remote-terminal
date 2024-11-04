@@ -10,6 +10,15 @@ function help_text()
 	print("Polling for commands from localhost:5000/remote")
 	print("Close session with \feCTRL+Q\f7")
 	print("Close server with \feCTRL+X\f7")
+
+	-- print(string.format("\fecostatus\f7: %s", co and costatus(co) or co))
+
+	print("\fePWD\f7: " .. pwd())
+	print("\f6>\f7")
+
+	for i = #commands, 1, -1 do
+		print("\f6>\f7" .. commands[i])
+	end
 end
 
 function _init()
@@ -35,6 +44,7 @@ function _init()
 	}
 
 	res = nil
+	commands = {}
 
 	help_text()
 end
@@ -42,11 +52,13 @@ end
 function _update()
 	if key("ctrl") then
 		if keyp("q") then
+			-- coroutine.close(co)
 			print("Close")
 			fetch("http://localhost:5000/close")
 		end
 
 		if keyp("x") then
+			-- coroutine.close(co)
 			print("Shutdown")
 			fetch("http://localhost:5000/shutdown")
 		end
@@ -68,15 +80,19 @@ function _update()
 end
 
 function _draw()
+	cls()
+	help_text()
+
 	if res != nil then
-		cls()
-
-		help_text()
-
 		local cmd_text = res
 		local cmd_lines = split(res, "\n", false)
 		if #cmd_lines > 1 then
 			cmd_text = cmd_lines[1] .. "..."
+		end
+
+		add(commands, cmd_text)
+		if #commands > 5 then
+			deli(commands, 1)
 		end
 
 		print(string.format("%s> %s", pwd(), cmd_text))
