@@ -66,7 +66,7 @@ To control the host from Picotron, start `prt-server` on the host.
 
 You can then issue commands by running `host <COMMAND>` from Picotron.
 
-### Tips
+#### Tips:
 
 * Only non-interactive commands work.
 * Only characters that can be displayed in Picotron work (so emojis, nerd fonts, ANSI codes, etc. won't display correctly).
