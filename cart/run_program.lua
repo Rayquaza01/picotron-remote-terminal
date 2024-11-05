@@ -1,5 +1,14 @@
 --[[pod_format="raw",created="2024-11-02 02:49:22",modified="2024-11-02 15:03:13",revision=164]]
 function resolve_program_path(progname)
+	if fstat(progname) then
+		for e in all(exe_extensions) do
+			-- if endswith extension
+			if progname:sub(-#e) == e then
+				return progname
+			end
+		end
+	end
+
 	for p in all(path) do
 		local files = ls(p)
 		for f in all(files) do
