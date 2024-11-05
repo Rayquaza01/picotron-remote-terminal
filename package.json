@@ -21,7 +21,6 @@
     "typescript": "^5.6.3"
   },
   "devDependencies": {
-    "@types/express": "^5.0.0",
-    "@types/lua-json": "^1.0.3"
+    "@types/express": "^5.0.0"
   }
 }
