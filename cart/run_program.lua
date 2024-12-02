@@ -37,7 +37,7 @@ function run_lua(script)
 				print(coerr)
 			end
 
-		until costatus(cor) != "running"
+		until costatus(cor) ~= "running"
     elseif err then
 		local near_msg = "syntax error near"
 		if (near_msg == sub(err, 5, 5 + #near_msg - 1)) then

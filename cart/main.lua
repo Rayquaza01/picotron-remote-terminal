@@ -74,7 +74,7 @@ function _update()
 		_, res = coresume(co, "http://localhost:5000/remote?" .. table_to_query(data))
 	end
 
-	if costatus(co) != "dead" then
+	if costatus(co) ~= "dead" then
 		_, res = coresume(co)
 	end
 end
@@ -83,7 +83,7 @@ function _draw()
 	cls()
 	help_text()
 
-	if res != nil then
+	if res ~= nil then
 		local cmd_text = res
 		local cmd_lines = split(res, "\n", false)
 		if #cmd_lines > 1 then
