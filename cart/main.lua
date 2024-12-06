@@ -64,63 +64,59 @@ function _update()
 		end
 	end
 
-	data = {
-		pwd = pwd(),
-		pid = pid()
-	}
 
 	if co == nil or costatus(co) == "dead" then
 		co = cocreate(fetch)
-		_, res = coresume(co, "http://localhost:5000/remote?" .. table_to_query(data))
 	end
 
 	if costatus(co) ~= "dead" then
-		_, res = coresume(co)
+		data = { pwd = pwd(), pid = pid() }
+		_, res = coresume(co, "http://localhost:5000/remote?" .. table_to_query(data))
+
+		if res ~= nil then
+			local cmd_text = res
+			local cmd_lines = split(res, "\n", false)
+			if #cmd_lines > 1 then
+				cmd_text = cmd_lines[1] .. "..."
+			end
+
+			add(commands, cmd_text)
+			if #commands > 5 then
+				deli(commands, 1)
+			end
+
+			-- print(string.format("%s> %s", pwd(), cmd_text))
+
+			local cmd = split(res, " ", false)
+			local progname = cmd[1]
+			deli(cmd, 1)
+
+			local command_path = resolve_program_path(progname)
+
+			if progname == "exit" then
+				exit()
+			elseif progname == "cd" then
+				local result = cd(cmd[1])
+				if result then
+					-- print(result)
+				else
+					-- print(string.format("%s>", pwd()))
+				end
+			elseif command_path then
+				create_process(command_path, {
+					print_to_proc_id = pid(),
+					argv = cmd,
+					path = pwd(),
+					window_attribs = {show_in_workspace = true}
+				})
+			else
+				run_lua(res)
+			end
+		end
 	end
 end
 
 function _draw()
 	cls()
 	help_text()
-
-	if res ~= nil then
-		local cmd_text = res
-		local cmd_lines = split(res, "\n", false)
-		if #cmd_lines > 1 then
-			cmd_text = cmd_lines[1] .. "..."
-		end
-
-		add(commands, cmd_text)
-		if #commands > 5 then
-			deli(commands, 1)
-		end
-
-		print(string.format("%s> %s", pwd(), cmd_text))
-
-		local cmd = split(res, " ", false)
-		local progname = cmd[1]
-		deli(cmd, 1)
-
-		local command_path = resolve_program_path(progname)
-
-		if progname == "exit" then
-			exit()
-		elseif progname == "cd" then
-			local result = cd(cmd[1])
-			if result then
-				print(result)
-			else
-				print(string.format("%s>", pwd()))
-			end
-		elseif command_path then
-			create_process(command_path, {
-				print_to_proc_id = pid(),
-				argv = cmd,
-				path = pwd(),
-				window_attribs = {show_in_workspace = true}
-			})
-		else
-			run_lua(res)
-		end
-	end
 end
