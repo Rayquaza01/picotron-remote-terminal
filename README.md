@@ -41,6 +41,19 @@ cp /appdata/system/util/prt.p64/exports/appdata/system/util/host.lua /appdata/sy
 
 This will install the `host` command, which can be used run commands from the host inside of Picotron.
 
+### (Optional) Install as a PUSH module
+
+```bash
+# from inside picotron
+
+# use the location of wherever you saved the prt cart
+cp /appdata/system/util/prt.p64/exports/appdata/system/terminal/prt.lua /appdata/system/terminal
+```
+
+If you are using PUSH, you can integrate PRT directly into the terminal. The push module adds a shell command (prt) that can be used instead of the cart. When using PRT as a PUSH module, command output *will* be displayed in the terminal window.
+
+Supported commands are `start`, `stop`, `restart`, `shutdown`, `status`.
+
 ## Usage
 
 ### Controlling Picotron From Host
