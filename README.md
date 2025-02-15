@@ -6,6 +6,14 @@ Remotely control Picotron from the host
 
 ### Install the server application:
 
+Install from NPM:
+
+```
+npm install -g picotron-remote-terminal
+```
+
+Or, install from source:
+
 ```bash
 git clone https://github.com/Rayquaza01/picotron-remote-terminal/
 cd picotron-remote-terminal
