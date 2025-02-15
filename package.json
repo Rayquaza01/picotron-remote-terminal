@@ -13,9 +13,17 @@
     "start": "node dist/prt-server.js",
     "prt": "node dist/prt.js"
   },
-  "author": "",
+  "author": "Rayquaza01",
   "license": "MIT",
-  "description": "",
+  "description": "Run commands remotely inside Picotron",
+  "repository": {
+      "type": "git",
+      "url": "https://github.com/Rayquaza01/picotron-remote-terminal"
+  },
+  "bugs": {
+      "url": "https://github.com/Rayquaza01/picotron-remote-terminal/issues"
+  },
+  "homepage": "https://github.com/Rayquaza01/picotron-remote-terminal",
   "dependencies": {
     "express": "^4.21.2",
     "typescript": "^5.7.3"
