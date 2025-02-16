@@ -6,6 +6,8 @@ Remotely control Picotron from the host
 
 ### Install the server application:
 
+The server application requires [Node.js](https://nodejs.org/en/download) to be installed.
+
 Install from NPM:
 
 ```
