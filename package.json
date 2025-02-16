@@ -17,18 +17,18 @@
   "license": "MIT",
   "description": "Run commands remotely inside Picotron",
   "repository": {
-      "type": "git",
-      "url": "https://github.com/Rayquaza01/picotron-remote-terminal"
+    "type": "git",
+    "url": "https://github.com/Rayquaza01/picotron-remote-terminal"
   },
   "bugs": {
-      "url": "https://github.com/Rayquaza01/picotron-remote-terminal/issues"
+    "url": "https://github.com/Rayquaza01/picotron-remote-terminal/issues"
   },
   "homepage": "https://github.com/Rayquaza01/picotron-remote-terminal",
   "dependencies": {
-    "express": "^4.21.2",
-    "typescript": "^5.7.3"
+    "express": "^4.21.2"
   },
   "devDependencies": {
-    "@types/express": "^5.0.0"
+    "@types/express": "^5.0.0",
+    "typescript": "^5.7.3"
   }
 }
